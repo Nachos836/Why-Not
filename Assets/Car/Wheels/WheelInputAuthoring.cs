@@ -9,8 +9,8 @@ namespace WhyNot.Car.Wheels
     [BurstCompile]
     public struct WheelInput : IComponentData
     {
-        [Required] public float3 Up { get; init; }
-        [Required] public RigidTransform WorldTransform { get; init; }
+        [Required] public float3 Up;
+        [Required] public RigidTransform WorldTransform;
     }
 
     public class WheelInputAuthoring : MonoBehaviour

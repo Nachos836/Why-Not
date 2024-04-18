@@ -9,7 +9,7 @@ namespace WhyNot.Car.Wheels
     [BurstCompile]
     public struct WheelOrigin : IComponentData
     {
-        [Required] public RigidTransform Value { get; init; }
+        [Required] public RigidTransform Value;
     }
 
     public class WheelOriginAuthoring : MonoBehaviour

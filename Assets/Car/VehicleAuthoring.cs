@@ -4,10 +4,11 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
-using WhyNot.Car.Wheels;
 
 namespace WhyNot.Car
 {
+    using Wheels;
+
     [BurstCompile]
     public struct Vehicle : IComponentData
     {

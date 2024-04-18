@@ -2,8 +2,8 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 using Unity.Physics;
+using UnityEngine;
 
 using Collider = Unity.Physics.Collider;
 
@@ -12,32 +12,45 @@ namespace WhyNot.Car.Wheels
     [BurstCompile]
     public struct Wheel : IComponentData
     {
-        [Required] public float Radius { get; init; }
-        [Required] public float Width { get; init; }
-        [Required] public float SuspensionLength { get; init; }
-        [Required] public BlobAssetReference<Collider> Collider { get; init; }
+        [Required] public float Radius;
+        [Required] public float Width;
+        [Required] public float SuspensionLength;
+        [Required] public BlobAssetReference<Collider> Collider;
     }
 
-    [RequireComponent(typeof(WheelOriginAuthoring), typeof(WheelInputAuthoring))]
-    public class WheelAuthoring : MonoBehaviour
+    [RequireComponent(typeof(WheelOriginAuthoring), typeof(WheelInputAuthoring), typeof(WheelContactAuthoring))]
+    internal sealed class WheelAuthoring : MonoBehaviour
     {
         [SerializeField] private float _radius;
         [SerializeField] private float _width;
+        [Header("Collider")]
         [SerializeField] private float _suspensionLength;
+        [Header("Suspension")]
+        [SerializeField] private LayerMask _belongsTo;
+        [SerializeField] private LayerMask _collidesWith;
 
-        public class WheelBaker : Baker<WheelAuthoring>
+        internal sealed class WheelBaker : Baker<WheelAuthoring>
         {
             public override void Bake(WheelAuthoring authoring)
             {
-                var collider = CylinderCollider.Create(new CylinderGeometry
-                {
-                    Center = float3.zero,
-                    Orientation = quaternion.AxisAngle(math.up(), math.PI * 0.5f),
-                    Height = authoring._width,
-                    Radius = authoring._radius,
-                    BevelRadius = 0.01f,
-                    SideCount = 12
-                });
+                var collider = CylinderCollider.Create
+                (
+                    new CylinderGeometry
+                    {
+                        Center = float3.zero,
+                        Orientation = quaternion.AxisAngle(math.up(), math.PI * 0.5f),
+                        Height = authoring._width,
+                        Radius = authoring._radius,
+                        BevelRadius = 0.01f,
+                        SideCount = 12
+                    },
+                    new CollisionFilter
+                    {
+                        BelongsTo = (uint) authoring._belongsTo.value,
+                        CollidesWith = ~0u & ~ (uint) authoring._collidesWith.value,
+                        GroupIndex = 0
+                    }
+                );
 
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
 

@@ -13,6 +13,7 @@ namespace WhyNot.Car
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.Enabled = false;
             state.RequireForUpdate<Vehicle>();
         }
 
