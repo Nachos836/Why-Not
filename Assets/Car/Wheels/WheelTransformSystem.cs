@@ -30,7 +30,7 @@ namespace WhyNot.Car.Wheels
             private void Execute(in WheelOrigin origin, in WheelContact contact, ref LocalTransform transform)
             {
                 transform.Position = origin.Value.pos
-                                   + math.rotate(origin.Value.rot, math.up()) * contact.Distance;
+                                   - math.rotate(origin.Value.rot, math.up()) * contact.Distance;
                 transform.Rotation = origin.Value.rot;
             }
         }

@@ -8,8 +8,8 @@ using Unity.Physics.Systems;
 namespace WhyNot.Car.Wheels
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    [UpdateAfter(typeof(WheelToVehicleSystem))]
     [UpdateAfter(typeof(PhysicsSystemGroup))]
-    [UpdateAfter(typeof(VehicleToWheelSystem))]
     public partial struct WheelContactSystem : ISystem
     {
         [BurstCompile]
