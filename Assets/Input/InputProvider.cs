@@ -8,16 +8,20 @@ namespace WhyNot.Input
 {
     internal sealed class InputProvider : MonoBehaviour
     {
-        private InputActions _inputActions = default;
-        private InputActions.DebugActions _debugInputs = default;
-        private Entity _entity = default;
-        private World _world;
-        private EntityManager _entityManager;
+        private InputActions _inputActions = default!;
+        private InputActions.DebugActions _debugInputs = default!;
+        private Entity _entity = Entity.Null;
+        private World _world = default!;
+        private EntityManager _entityManager = default!;
+        private InputAction _mousePick = default!;
+        private InputAction _mousePosition = default!;
 
         private void Awake()
         {
             _inputActions = new InputActions();
             _debugInputs = _inputActions.Debug;
+            _mousePick = _debugInputs.MousePick;
+            _mousePosition = _debugInputs.MousePosition;
             _world = World.DefaultGameObjectInjectionWorld;
             _entityManager = _world.EntityManager;
         }
@@ -26,13 +30,19 @@ namespace WhyNot.Input
         {
             _inputActions.Enable();
             _debugInputs.Enable();
-            _debugInputs.MousePick.performed += HandleMousePick;
+            _mousePick.Enable();
+            _mousePosition.Enable();
+
+            _mousePosition.performed += HandleMousePick;
         }
 
         private void OnDisable()
         {
+            _mousePosition.performed -= HandleMousePick;
+
+            _mousePosition.Disable();
+            _mousePick.Disable();
             _inputActions.Disable();
-            _debugInputs.MousePick.performed -= HandleMousePick;
             _debugInputs.Disable();
 
             if (_world.IsCreated && !_entityManager.Exists(_entity))
@@ -44,11 +54,14 @@ namespace WhyNot.Input
         private void HandleMousePick(InputAction.CallbackContext context)
         {
             var mousePosition = context.ReadValue<Vector2>();
+            var currentCamera = Camera.main!;
+            var ray = currentCamera.ScreenPointToRay(mousePosition);
+
             Debug.Log($"Mouse position: {mousePosition}");
-            RaycastInput raycastInput = new()
+            RaycastInput raycastInput = new ()
             {
-                Start = Camera.main.ScreenPointToRay(mousePosition).origin,
-                End = Camera.main.ScreenPointToRay(mousePosition).direction * 1000f,
+                Start = ray.origin,
+                End = ray.GetPoint(currentCamera.farClipPlane),
                 Filter = CollisionFilter.Default
             };
 
@@ -57,7 +70,9 @@ namespace WhyNot.Input
                 _entity = _entityManager.CreateEntity();
                 _entityManager.AddBuffer<InputBuffer>(_entity);
             }
-            _entityManager.GetBuffer<InputBuffer>(_entity).Add(new InputBuffer { Raycast = raycastInput });
+
+            _entityManager.GetBuffer<InputBuffer>(_entity)
+                .Add(new InputBuffer { Raycast = raycastInput });
         }
     }
 
