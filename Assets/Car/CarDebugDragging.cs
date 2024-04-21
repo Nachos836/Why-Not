@@ -29,13 +29,13 @@ namespace WhyNot.Car
         {
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
 
-            foreach (var buffer in SystemAPI.Query<DynamicBuffer<InputBuffer>>())
+            foreach (var (buffer, _) in SystemAPI.Query<DynamicBuffer<InputBuffer>, RefRO<InputGathered>>())
             {
                 foreach (var candidate in buffer)
                 {
                     if (physicsWorld.CastRay(candidate.Raycast, out var hit))
                     {
-                        Debug.Log($"{hit.Position}");
+                        Debug.Log($"[HIT!] {hit.Position}");
                     }
                 }
 

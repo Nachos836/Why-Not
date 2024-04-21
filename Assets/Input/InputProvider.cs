@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
 using UnityEngine;
@@ -33,12 +33,14 @@ namespace WhyNot.Input
             _mousePick.Enable();
             _mousePosition.Enable();
 
-            _mousePosition.performed += HandleMousePick;
+            _mousePick.started += HandleStartMousePick;
+            _mousePick.canceled += HandleEndMousePick;
         }
 
         private void OnDisable()
         {
-            _mousePosition.performed -= HandleMousePick;
+            _mousePick.canceled -= HandleEndMousePick;
+            _mousePick.started -= HandleStartMousePick;
 
             _mousePosition.Disable();
             _mousePick.Disable();
@@ -51,7 +53,27 @@ namespace WhyNot.Input
             }
         }
 
-        private void HandleMousePick(InputAction.CallbackContext context)
+        private void HandleEndMousePick(InputAction.CallbackContext obj)
+        {
+            if (_entity != Entity.Null)
+            {
+                _entityManager.SetComponentEnabled<InputGathered>(_entity, true);
+            }
+
+            _mousePosition.performed -= HandleMousePosition;
+        }
+
+        private void HandleStartMousePick(InputAction.CallbackContext obj)
+        {
+            if (_entity != Entity.Null)
+            {
+                _entityManager.SetComponentEnabled<InputGathered>(_entity, false);
+            }
+
+            _mousePosition.performed += HandleMousePosition;
+        }
+
+        private void HandleMousePosition(InputAction.CallbackContext context)
         {
             var mousePosition = context.ReadValue<Vector2>();
             var currentCamera = Camera.main!;
@@ -68,16 +90,18 @@ namespace WhyNot.Input
             if (_world.IsCreated && !_entityManager.Exists(_entity))
             {
                 _entity = _entityManager.CreateEntity();
-                _entityManager.AddBuffer<InputBuffer>(_entity);
+
+                using var commands = new EntityCommandBuffer(Allocator.Temp);
+
+                commands.AddBuffer<InputBuffer>(_entity);
+                commands.AddComponent<InputGathered>(_entity);
+                commands.SetComponentEnabled<InputGathered>(_entity, false);
+
+                commands.Playback(_entityManager);
             }
 
             _entityManager.GetBuffer<InputBuffer>(_entity)
                 .Add(new InputBuffer { Raycast = raycastInput });
         }
-    }
-
-    public struct InputBuffer : IBufferElementData
-    {
-        [Required] public RaycastInput Raycast;
     }
 }
