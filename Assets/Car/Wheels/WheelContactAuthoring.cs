@@ -7,7 +7,7 @@ using UnityEngine;
 namespace WhyNot.Car.Wheels
 {
     [BurstCompile]
-    public struct WheelContact : IComponentData
+    internal struct WheelContact : IComponentData
     {
         [Required] public bool IsInContact;
         [Required] public float3 Point;
@@ -15,9 +15,9 @@ namespace WhyNot.Car.Wheels
         [Required] public float Distance;
     }
 
-    public class WheelContactAuthoring : MonoBehaviour
+    internal sealed class WheelContactAuthoring : MonoBehaviour
     {
-        public class WheelContactBaker : Baker<WheelContactAuthoring>
+        internal sealed class WheelContactBaker : Baker<WheelContactAuthoring>
         {
             public override void Bake(WheelContactAuthoring authoring)
             {

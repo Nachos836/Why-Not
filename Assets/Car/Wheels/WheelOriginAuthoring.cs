@@ -7,25 +7,26 @@ using UnityEngine;
 namespace WhyNot.Car.Wheels
 {
     [BurstCompile]
-    public struct WheelOrigin : IComponentData
+    internal struct WheelOrigin : IComponentData
     {
         [Required] public RigidTransform Value;
     }
 
-    public class WheelOriginAuthoring : MonoBehaviour
+    internal sealed class WheelOriginAuthoring : MonoBehaviour
     {
-        public class WheelOriginBaker : Baker<WheelOriginAuthoring>
+        internal sealed class WheelOriginBaker : Baker<WheelOriginAuthoring>
         {
             public override void Bake(WheelOriginAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
+                var transform = authoring.transform;
 
                 AddComponent(entity, new WheelOrigin
                 {
                     Value = new RigidTransform
                     {
-                        pos = authoring.transform.localPosition,
-                        rot = authoring.transform.localRotation
+                        pos = transform.localPosition,
+                        rot = transform.localRotation
                     }
                 });
             }

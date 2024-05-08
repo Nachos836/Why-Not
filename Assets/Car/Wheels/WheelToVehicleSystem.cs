@@ -6,7 +6,7 @@ using Unity.Transforms;
 namespace WhyNot.Car.Wheels
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    public partial struct WheelToVehicleSystem : ISystem
+    internal partial struct WheelToVehicleSystem : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)

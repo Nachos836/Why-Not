@@ -5,13 +5,13 @@ using UnityEngine;
 namespace WhyNot.Car
 {
     [BurstCompile]
-    public struct Vehicle : IComponentData
+    internal struct Vehicle : IComponentData
     {
     }
 
-    public class VehicleAuthoring : MonoBehaviour
+    internal sealed class VehicleAuthoring : MonoBehaviour
     {
-        public class VehicleBaker : Baker<VehicleAuthoring>
+        internal sealed class VehicleBaker : Baker<VehicleAuthoring>
         {
             public override void Bake(VehicleAuthoring authoring)
             {

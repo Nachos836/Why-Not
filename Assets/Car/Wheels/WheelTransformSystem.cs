@@ -8,7 +8,7 @@ namespace WhyNot.Car.Wheels
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(TransformSystemGroup))]
-    public partial struct WheelTransformSystem : ISystem
+    internal partial struct WheelTransformSystem : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state) { }
@@ -27,7 +27,7 @@ namespace WhyNot.Car.Wheels
         private partial struct UpdateTransformJob : IJobEntity
         {
             [BurstCompile]
-            private void Execute(in WheelOrigin origin, in WheelContact contact, ref LocalTransform transform)
+            private static void Execute(in WheelOrigin origin, in WheelContact contact, ref LocalTransform transform)
             {
                 transform.Position = origin.Value.pos
                                    - math.rotate(origin.Value.rot, math.up()) * contact.Distance;

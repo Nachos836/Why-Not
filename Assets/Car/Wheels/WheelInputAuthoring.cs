@@ -7,15 +7,15 @@ using UnityEngine;
 namespace WhyNot.Car.Wheels
 {
     [BurstCompile]
-    public struct WheelInput : IComponentData
+    internal struct WheelInput : IComponentData
     {
         [Required] public float3 Up;
         [Required] public RigidTransform WorldTransform;
     }
 
-    public class WheelInputAuthoring : MonoBehaviour
+    internal sealed class WheelInputAuthoring : MonoBehaviour
     {
-        public class WheelInputBaker : Baker<WheelInputAuthoring>
+        internal sealed class WheelInputBaker : Baker<WheelInputAuthoring>
         {
             public override void Bake(WheelInputAuthoring authoring)
             {

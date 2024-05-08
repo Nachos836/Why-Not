@@ -10,7 +10,7 @@ namespace WhyNot.Car.Wheels
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateAfter(typeof(WheelToVehicleSystem))]
     [UpdateAfter(typeof(PhysicsSystemGroup))]
-    public partial struct WheelContactSystem : ISystem
+    internal partial struct WheelContactSystem : ISystem
     {
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -35,8 +35,9 @@ namespace WhyNot.Car.Wheels
         {
             [Required] [field: ReadOnly] public PhysicsWorld PhysicsWorld { get; init; }
 
+            /// <param name="wheel">Wheel is mutable in order to avoid copy on GetUnsafePtr</param>
             [BurstCompile]
-            private void Execute(in Wheel wheel, in WheelInput input, ref WheelContact contact)
+            private readonly void Execute(in WheelInput input, ref Wheel wheel, ref WheelContact contact)
             {
                 unsafe
                 {

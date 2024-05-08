@@ -9,10 +9,10 @@ namespace WhyNot.Input
     internal sealed class InputProvider : MonoBehaviour
     {
         private InputActions _inputActions = default!;
-        private InputActions.DebugActions _debugInputs = default!;
+        private InputActions.DebugActions _debugInputs;
         private Entity _entity = Entity.Null;
         private World _world = default!;
-        private EntityManager _entityManager = default!;
+        private EntityManager _entityManager;
         private InputAction _mousePick = default!;
         private InputAction _mousePosition = default!;
 

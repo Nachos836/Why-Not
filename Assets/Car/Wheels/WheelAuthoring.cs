@@ -10,7 +10,7 @@ using Collider = Unity.Physics.Collider;
 namespace WhyNot.Car.Wheels
 {
     [BurstCompile]
-    public struct Wheel : IComponentData
+    internal struct Wheel : IComponentData
     {
         [Required] public float Radius;
         [Required] public float Width;
